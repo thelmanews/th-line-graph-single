@@ -217,23 +217,41 @@
               polymerObj.svg
                 .attr("width", polymerObj.dims.width+ polymerObj.dims.margin.right + polymerObj.dims.margin.left) // TODO: need to fix so the svg width already accounts for this!
                 .attr("height", polymerObj.dims.height); 
-
+                console.log(polymerObj.dims.margin.left);
               polymerObj.g
                 .attr("transform", "translate(0,"+ (polymerObj.dims.height-polymerObj.dims.margin.top) +")");
 
          
             },
+  
             _setupElementSizes: function(polymerObj){
               var width = polymerObj.dims.width,
                   height = polymerObj.dims.height,
                   y = polymerObj.y,
                   x = polymerObj.x,
                   data = polymerObj.chartData,
-                  valueSize = Math.min(width, height)/3;
+                  valueSize = Math.min(width, height)/3,
+
                   
               // if this option is true, set all display_values equal to values, otherwise leave them as is    
               data = polymerObj.defaultDisplayValues ? polymerObj.setDisplayVals(polymerObj) : data;
-                
+              console.log(polymerObj.dims.margin.left);
+
+              // After display values are determined, adjust margins for long values
+              var firstValueLength = data[0].display_value.length;
+              var lastValueLength = data[data.length - 1].display_value.length;
+              
+              // If last val is long, increase right margin
+              polymerObj.dims.margin.right += lastValueLength > 5 ? (lastValueLength - 5)*8 : 0; 
+              
+              // If first val is long, shift label (increasing margin left is not ideal because of y-Axis)
+              if (firstValueLength > 4) { 
+                polymerObj.tips
+                  .attr('transform',function(d,i){
+                    var offset = i === 0 ? (firstValueLength - 4)*7 : 0;
+                    return "translate("+offset+",0)";
+                  });
+              }
               staticObj._setupContainerSize(polymerObj);
               
               // polymerObj.xAxis
@@ -380,8 +398,9 @@
             self.dims.margin.left = 15;
             self.dims.margin.top += self.dims.joystick.d;
             self.dims.margin.bottom += self.dims.joystick.d;
+
             self.dims.width = self.dims.width = Math.max(100,(self.chartWidth -self.dims.margin.left - self.dims.margin.right));
-          
+            console.log(self.dims.width);
             staticObj._scaleBuilder(self);
             staticObj._setupElements(self);
             staticObj._setupElementSizes(self); 
@@ -505,7 +524,6 @@
             var self = this;
             self.animateAxis();
             self.animateLines();
-            
             if (self.joyStick) {
               self.moveJoystick();
               self.showCurrentData(self.currentPos, firstTime=true);
