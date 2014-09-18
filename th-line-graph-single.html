@@ -493,12 +493,12 @@
                 svg = self.svg;
       
             // removes the lines, joystick and data/notes
-            g.selectAll("path, circle, text, rect, line").remove();     
+            g.remove(); 
             d3.select(self.$.info).selectAll("div, li").remove();  
-            svg.selectAll('g.joyStick').remove();
+            svg.selectAll('g.joystick').remove();
+            
             staticObj._setupElements(self);
             staticObj._setupElementSizes(self); 
-            
           },
 
           animate: function() {
@@ -664,8 +664,6 @@
                 g = self.g;
 
             self.currentPos.x = x(self.currentPos.label);  
-            
-            if (!self.joystick){
               
               self.joystick = svg.selectAll('g.joystick')
                   .data([{x: self.currentPos.x}]) //??
@@ -688,7 +686,7 @@
                   .style("fill-opacity", 0);
 
               self.joystick.append("circle")
-                  .attr("class", "target")
+  
                   .attr("r", 8)
                   .attr("cx", self.currentPos.x)
                   .attr("cy", self.dims.joystick.r)
@@ -704,12 +702,13 @@
                   .attr("class", "fill-foreground")
                   .attr('opacity', 0.4)
                   .style('fill', self.textColor);
-
+              
               self.joystick
                 .call(drag);
 
               self.lastPosX = self.joystick.select("circle.target").attr("cx");
-            }
+
+
 
             function dragMove(d){
               var x = self.x;
