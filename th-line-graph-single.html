@@ -73,6 +73,8 @@
            _scaleBuilder: function(polymerObj) {
               polymerObj.maxLabel = polymerObj.getBoundaryValue(polymerObj, "label", d3.max);
               polymerObj.minLabel = polymerObj.getBoundaryValue(polymerObj, "label", d3.min);
+              console.log('polymerObj.maxLabel X',polymerObj.maxLabel);
+              console.log('polymerObj.minLabel X',polymerObj.minLabel);
               polymerObj.maxValue = polymerObj.yAxisMax != "" && (!isNaN(parseInt(polymerObj.yAxisMax))) ? polymerObj.yAxisMax : polymerObj.getBoundaryValue(polymerObj, "value", d3.max);
               polymerObj.minValue = polymerObj.yAxisMin != "" && (!isNaN(parseInt(polymerObj.yAxisMin))) ? polymerObj.yAxisMin : polymerObj.getBoundaryValue(polymerObj, "value", d3.min);
 
@@ -100,12 +102,25 @@
                 "MM-YY": "%m-%y",
                 "Mth-YY": "%b-%y",
                 "YY": "\'%y",
-                "YYYY": "%Y"
+                "YYYY": "%Y",
+                "HH:MM AM/PM": "%I:%M %p"
               };
 
               polymerObj.dateFormat = DATE_FORMATS[polymerObj.dateType] || "%Y";
 
-              polymerObj.x = d3.time.scale().domain(d3.extent(polymerObj.chartData, function(d){return Date.parse(d.label);})).range([polymerObj.dims.margin.left, polymerObj.dims.width ]);
+              var format = d3.time.format(polymerObj.dateFormat);
+
+
+              polymerObj.x = d3.time.scale().domain(d3.extent(polymerObj.chartData, function(d){
+
+                var dd = (d.label.replace) ? d.label.replace('\t',' ') : d.label;
+                var parsed = (polymerObj.dateFormat=="%I:%M %p") ? format.parse(dd) : Date.parse(dd);
+                console.log('parse ',parsed);
+                 return parsed;
+
+               })).range([polymerObj.dims.margin.left, polymerObj.dims.width ]);
+
+              console.log('polymerObj.x', polymerObj.x);
 
               polymerObj.chartData.forEach(function(d){
                 d.date = Date.parse(d.label);
@@ -217,7 +232,6 @@
               polymerObj.svg
                 .attr("width", polymerObj.dims.width+ polymerObj.dims.margin.right + polymerObj.dims.margin.left) // TODO: need to fix so the svg width already accounts for this!
                 .attr("height", polymerObj.dims.height); 
-                console.log(polymerObj.dims.margin.left);
               polymerObj.g
                 .attr("transform", "translate(0,"+ (polymerObj.dims.height-polymerObj.dims.margin.top) +")");
 
@@ -235,7 +249,6 @@
                   
               // if this option is true, set all display_values equal to values, otherwise leave them as is    
               data = polymerObj.defaultDisplayValues ? polymerObj.setDisplayVals(polymerObj) : data;
-              console.log(polymerObj.dims.margin.left);
 
               // After display values are determined, adjust margins for long values
               var firstValueLength = data[0].display_value.length;
@@ -400,7 +413,6 @@
             self.dims.margin.bottom += self.dims.joystick.d;
 
             self.dims.width = self.dims.width = Math.max(100,(self.chartWidth -self.dims.margin.left - self.dims.margin.right));
-            console.log(self.dims.width);
             staticObj._scaleBuilder(self);
             staticObj._setupElements(self);
             staticObj._setupElementSizes(self); 
