@@ -729,6 +729,7 @@
 
 
             function dragMove(d){
+              d3.event.sourceEvent.stopPropagation();
               var x = self.x;
 
                 // style the circle
