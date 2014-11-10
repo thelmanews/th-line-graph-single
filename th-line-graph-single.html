@@ -398,9 +398,9 @@
             self.dims.margin.left = 15;
             self.dims.margin.top += self.dims.joystick.d;
             self.dims.margin.bottom += self.dims.joystick.d;
+            
+            self.dims.width = self.dims.width = Math.max(100,(self.computedWidth -self.dims.margin.left - self.dims.margin.right));
 
-            self.dims.width = self.dims.width = Math.max(100,(self.chartWidth -self.dims.margin.left - self.dims.margin.right));
-            console.log(self.dims.width);
             staticObj._scaleBuilder(self);
             staticObj._setupElements(self);
             staticObj._setupElementSizes(self); 
@@ -417,7 +417,7 @@
             self.dims.margin.top += self.dims.joystick.d;
             self.dims.margin.bottom += self.dims.joystick.d;
 
-            self.dims.width = Math.max(100,(self.chartWidth*0.95 -self.dims.margin.left - self.dims.margin.right));
+            self.dims.width = Math.max(100,(self.computedWidth*0.95 -self.dims.margin.left - self.dims.margin.right));
           
             staticObj._scaleBuilder(self);
             staticObj._setupElementSizes(self);
