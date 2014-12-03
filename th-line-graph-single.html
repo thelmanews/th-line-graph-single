@@ -158,7 +158,8 @@
               
               polymerObj.xLabels = g.selectAll('.axis').selectAll('text')
                 .attr('class', 'label no-stroke xLabel').attr('y', 8)
-                .style('fill', polymerObj.textColor);
+                .style('fill', polymerObj.textColor)
+                .attr("opacity", function(d) { return polymerObj.xAxisLabels ? 1 : 0; });
 
               // y labels
               polymerObj.yLabels = g.selectAll(".yLabel")
